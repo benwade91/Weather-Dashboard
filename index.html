@@ -34,10 +34,10 @@
             <div class="col-9">
                 <div class="todaysWeather rounded my-3 p-3 border border-end-0">
                     <h3><span id="cityName">Your City</span><span id="cityDate"> 1/11/2021</span></h3>
-                    <p>Temperature:</p>
-                    <p>Humidity:</p>
-                    <p>Wind Speed:</p>
-                    <p>UV Index:</p>
+                    <p>Temperature: <span id="todayTemp"></span></p>
+                    <p>Humidity: <span id="todayHumi">bbb</span></p>
+                    <p>Wind Speed: <span id="todayWind"></span></p>
+                    <p>UV Index: <span id="todayUv"></span></p>
                 </div>
                 <div class="fiveDay">
                     <h3>5-Day Forecast:</h3>
@@ -88,6 +88,7 @@
         </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
     <script src="./assets/js/script.js"></script>
 </body>
 
