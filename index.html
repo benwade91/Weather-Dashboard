@@ -16,11 +16,10 @@
     </header>
     <div class="container">
         <div class="row w-90">
-            <div class="col-3">
+            <div class="col-3" id="cityForm">
                 <label for="citySearch" class="form-label h3">Search for a City:</label>
-                <div class="input-group mb-3">
-                    <input type="text" class="form-control" placeholder="Where?" list="datalistOptions" id="citySearch"
-                        aria-describedby="button-addon2">
+                <form class="input-group mb-3">
+                    <input type="text" class="form-control" placeholder="Where?" list="datalistOptions" id="citySearch">
                     <datalist id="datalistOptions">
                         <option value="San Francisco">
                         <option value="New York">
@@ -28,8 +27,8 @@
                         <option value="Los Angeles">
                         <option value="Chicago">
                     </datalist>
-                    <button class="btn btn-primary" type="button" id="button-addon2">🔍</button>
-                </div>
+                    <button class="btn btn-primary" type="submit" id="button-addon2">🔍</button>
+                </form>
                 <div class="previousCities"></div>
             </div>
             <div class="col-9">
