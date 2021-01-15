@@ -1,5 +1,7 @@
 var apiKey = "411165753b54ef779d0c21d853c22321";
 var city = "san francisco";
+var previousCities = [];
+var previousCitiesEl = document.querySelector("#previousCities");
 //search elements
 var cityInputEl = document.querySelector("#citySearch");
 var cityFormEl = document.querySelector("#cityForm");
@@ -17,11 +19,14 @@ var citySubmitHandler = function (event) {
 
     event.preventDefault();
 
-    var city = cityInputEl.value.trim();
+    var citySearch = cityInputEl.value.trim();
 
-    if (city) {
-        console.log(city);
+    if (citySearch) {
+        getWeather(citySearch);
         cityInputEl.value = "";
+        previousCities.push(citySearch);
+        localStorage.setItem("cities", JSON.stringify(previousCities));
+        showPrevious();
     } else {
         alert("Please enter a city");
     }
@@ -35,7 +40,6 @@ var getWeather = function (city) {
         .then(function (response) {
 
             if (response.ok) {
-                console.log(response);
                 response.json().then(function (data) {
                     console.log(data);
                     showWeather(data);
@@ -49,39 +53,50 @@ var getWeather = function (city) {
         });
 };
 
-var showWeather = function(data){
+var showWeather = function (data) {
     var lat = data.coord.lat;
     var lon = data.coord.lon;
 
     todaysCityEl.textContent = data.name;
-    todaysDateEl.textContent = moment(data.dt * 1000).format("[ ]MMM Do YYYY");
+    todaysDateEl.textContent = moment(data.dt * 1000).format("[  ](M/DD/YYYY)");
     todayTempEl.textContent = Math.floor(data.main.temp) + "ºF";
     todayHumiEl.textContent = Math.floor(data.main.humidity) + "%";
     todayWindEl.textContent = data.wind.speed + " MPH"
-    
-    var fiveDayApi = "https://api.openweathermap.org/data/2.5/onecall?lat="+lat+"&lon="+lon+"&units=imperial&appid="+apiKey;
-    fetch(fiveDayApi)
-    .then(function (response) {
 
-        if (response.ok) {
-            console.log(response);
-            response.json().then(function (data) {
-                console.log(data);
-                fiveDayForecast(data);
-            });
-        } else {
-            alert("Error: " + response.statusText);
-        }
-    })
-    .catch(function (error) {
-        alert("Unable to get weather");
-    });
+    var fiveDayApi = "https://api.openweathermap.org/data/2.5/onecall?lat=" + lat + "&lon=" + lon + "&units=imperial&appid=" + apiKey;
+    fetch(fiveDayApi)
+        .then(function (response) {
+
+            if (response.ok) {
+                response.json().then(function (data) {
+                    console.log(data);
+                    fiveDayForecast(data);
+                });
+            } else {
+                alert("Error: " + response.statusText);
+            }
+        })
+        .catch(function (error) {
+            alert("Unable to get weather");
+        });
 };
 
-var fiveDayForecast = function(data){
-    todayUvEl.textContent = data.current.uvi
-    for (i=1; i < 6; i++){
-        console.log(moment(data.daily[i].dt * 1000).format("[ ]M/DD/YYYY"));
+//handles 5-day forecast and uv index for current days weather.
+var fiveDayForecast = function (data) {
+    //uv index handling
+    var uvIndex = data.current.uvi;
+    todayUvEl.textContent = uvIndex
+    if (uvIndex < 3) {
+        todayUvEl.classList = "bg-success p-3 text-white rounded";
+    } else if (uvIndex > 2 && uvIndex < 6) {
+        todayUvEl.classList = "bg-warning p-3 text-white rounded";
+    } else {
+        todayUvEl.classList = "bg-danger p-3 text-white rounded";
+    }
+
+
+    fiveDayEl.innerHTML = "";
+    for (i = 1; i < 6; i++) {
 
         var dailyForecast = document.createElement("div");
         dailyForecast.classList = "card bg-primary text-white m-2 col-2";
@@ -108,5 +123,25 @@ var fiveDayForecast = function(data){
     }
 }
 
+var showPrevious = function(){
+    previousCitiesEl.innerHTML = "";
+    previousCities = JSON.parse(localStorage.getItem("cities"));
+    if (!previousCities) {
+        previousCities = [];
+    }
+    for (i=0; i < previousCities.length; i++){
+        var previousLineItem = document.createElement("li");
+        previousLineItem.textContent = previousCities[i];
+        previousLineItem.classList = "list-group-item";
+        previousLineItem.style = "cursor: pointer";
+        previousCitiesEl.appendChild(previousLineItem);
+    }
+}
+
+$("#previousCities").on("click",".list-group-item",function(){
+    getWeather(this.textContent);
+});
+
+showPrevious();
 getWeather(city);
 cityFormEl.addEventListener("submit", citySubmitHandler);
