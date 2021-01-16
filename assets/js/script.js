@@ -59,7 +59,7 @@ var getWeather = function (city) {
 var showWeather = function (data) {
     //create png icon
     var dailyWeatherPng = document.createElement("img");
-    dailyWeatherPng.setAttribute("src", "http://openweathermap.org/img/wn/" + data.weather[0].icon + "@2x.png");
+    dailyWeatherPng.setAttribute("src", "https://openweathermap.org/img/wn/" + data.weather[0].icon + "@2x.png");
     dailyWeatherPng.classList = "bg-white mb-2";
     //city name
     todaysCityEl.textContent = data.name;
